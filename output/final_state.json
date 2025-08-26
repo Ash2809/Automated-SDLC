@@ -1,0 +1,604 @@
+{
+  "spec": {
+    "project_name": "Task Manager",
+    "description": "A simple web app to track personal tasks and reminders",
+    "features": [
+      "User authentication",
+      "Task CRUD",
+      "Due date reminders",
+      "Tags and filters"
+    ],
+    "constraints": {
+      "tech_stack": "React + FastAPI + Postgres",
+      "deployment": "docker",
+      "priority": "high"
+    }
+  },
+  "user_stories": [
+    {
+      "id": 1,
+      "title": "As a user, I want to be able to create an account so that I can securely store my tasks.",
+      "description": "This story covers the creation of new user accounts.",
+      "acceptance_criteria": [
+        "User can navigate to a signup page.",
+        "User can enter a valid email and password.",
+        "System validates email format and password strength (minimum 8 characters, one uppercase, one number).",
+        "Upon successful signup, user is redirected to the task list page.",
+        "System sends a confirmation email (optional, for future iteration).",
+        "System handles duplicate email addresses gracefully."
+      ],
+      "priority": "high",
+      "epic": "User Authentication"
+    },
+    {
+      "id": 2,
+      "title": "As a user, I want to be able to log in to my account so that I can access my tasks.",
+      "description": "This story covers the login functionality.",
+      "acceptance_criteria": [
+        "User can navigate to a login page.",
+        "User can enter their registered email and password.",
+        "System validates credentials against the database.",
+        "Upon successful login, user is redirected to the task list page.",
+        "System handles invalid credentials gracefully (e.g., displays an error message).",
+        "System supports 'remember me' functionality (optional, for future iteration)."
+      ],
+      "priority": "high",
+      "epic": "User Authentication"
+    },
+    {
+      "id": 3,
+      "title": "As a user, I want to be able to create a new task so that I can track my to-dos.",
+      "description": "This story covers the creation of new tasks.",
+      "acceptance_criteria": [
+        "User can add a task with a title (required).",
+        "User can add a description (optional).",
+        "User can set a due date (optional).",
+        "User can add tags (optional).",
+        "Upon successful creation, the task is displayed in the task list.",
+        "System handles empty titles gracefully."
+      ],
+      "priority": "high",
+      "epic": "Task Management"
+    },
+    {
+      "id": 4,
+      "title": "As a user, I want to be able to read my existing tasks so that I can review my to-dos.",
+      "description": "This story covers viewing existing tasks.",
+      "acceptance_criteria": [
+        "All created tasks are displayed in a user-friendly list.",
+        "Each task displays its title, description (if any), due date (if any), and tags (if any).",
+        "Tasks are sorted by due date (ascending by default).",
+        "The list is paginated for large numbers of tasks (optional, for future iteration)."
+      ],
+      "priority": "high",
+      "epic": "Task Management"
+    },
+    {
+      "id": 5,
+      "title": "As a user, I want to be able to update my existing tasks so that I can reflect changes in my to-dos.",
+      "description": "This story covers updating existing tasks.",
+      "acceptance_criteria": [
+        "User can edit the title, description, due date, and tags of an existing task.",
+        "Changes are saved and reflected in the task list.",
+        "System handles updates gracefully (e.g., displays an error if the title is empty)."
+      ],
+      "priority": "high",
+      "epic": "Task Management"
+    },
+    {
+      "id": 6,
+      "title": "As a user, I want to be able to delete my tasks so that I can remove completed or irrelevant to-dos.",
+      "description": "This story covers deleting existing tasks.",
+      "acceptance_criteria": [
+        "User can delete a task.",
+        "Deleted task is removed from the task list.",
+        "System provides confirmation before deleting a task (optional, for future iteration)."
+      ],
+      "priority": "high",
+      "epic": "Task Management"
+    },
+    {
+      "id": 7,
+      "title": "As a user, I want to receive reminders for tasks with due dates so that I don't miss deadlines.",
+      "description": "This story covers due date reminders.  Implementation details to be determined in a later sprint.",
+      "acceptance_criteria": [
+        "System sends email reminders (or other notification method) a configurable time before the due date.",
+        "User can configure reminder settings (optional, for future iteration)."
+      ],
+      "priority": "medium",
+      "epic": "Reminders"
+    },
+    {
+      "id": 8,
+      "title": "As a user, I want to be able to filter tasks by tag so that I can easily find specific tasks.",
+      "description": "This story covers filtering tasks by tags.",
+      "acceptance_criteria": [
+        "User can select tags from a list.",
+        "System filters the task list to display only tasks with the selected tags.",
+        "System handles cases where no tasks match the filter."
+      ],
+      "priority": "medium",
+      "epic": "Filtering and Tagging"
+    }
+  ],
+  "architecture": {
+    "description": "A microservice architecture is overkill for this project given the constraints.  A simple, monolithic architecture using a well-defined layered approach will suffice.  This prioritizes rapid development and ease of deployment while still allowing for future scalability if needed.",
+    "system_diagram": "```\n+-----------------+     +-----------------+     +-----------------+\n|   React Client  |---->| FastAPI Server  |---->| PostgreSQL DB  |\n+-----------------+     +-----------------+     +-----------------+\n                    ^                               |\n                    |                               |\n                    +-------------------------------+\n                                    | \n                                    +--- Reminders (e.g., Celery/Redis)\n```",
+    "services": [
+      {
+        "name": "FastAPI Server",
+        "description": "Handles API requests, business logic, and data access.  Uses FastAPI for its speed and ease of use.",
+        "technologies": [
+          "FastAPI",
+          "Python 3.9+",
+          "SQLAlchemy"
+        ]
+      },
+      {
+        "name": "React Client",
+        "description": "Provides the user interface for task management.",
+        "technologies": [
+          "React",
+          "Redux (optional)",
+          "Material UI (optional)"
+        ]
+      },
+      {
+        "name": "Reminder Service (Optional)",
+        "description": "Handles sending due date reminders.  Can be implemented using Celery (with Redis or RabbitMQ) for asynchronous task processing.  For MVP, this could be a simple cron job within the FastAPI server.",
+        "technologies": [
+          "Celery",
+          "Redis/RabbitMQ (optional)"
+        ]
+      }
+    ],
+    "data_model": {
+      "users": {
+        "columns": [
+          "id (UUID, primary key)",
+          "username (varchar, unique)",
+          "password (varchar)",
+          "email (varchar, unique)"
+        ]
+      },
+      "tasks": {
+        "columns": [
+          "id (UUID, primary key)",
+          "user_id (UUID, foreign key)",
+          "title (varchar)",
+          "description (text)",
+          "due_date (timestamp)",
+          "completed (boolean)",
+          "tags (array of varchar)"
+        ]
+      }
+    },
+    "api_contracts": {
+      "users": {
+        "POST /users": {
+          "request": {
+            "username": "string",
+            "password": "string",
+            "email": "string"
+          },
+          "response": {
+            "token": "string"
+          }
+        },
+        "GET /users/me": {
+          "request": {
+            "Authorization": "Bearer <token>"
+          },
+          "response": {
+            "id": "UUID",
+            "username": "string",
+            "email": "string"
+          }
+        }
+      },
+      "tasks": {
+        "GET /tasks": {
+          "request": {
+            "Authorization": "Bearer <token>",
+            "due_date": "date (optional)",
+            "tags": "array of strings (optional)"
+          },
+          "response": "[task objects]"
+        },
+        "POST /tasks": {
+          "request": {
+            "Authorization": "Bearer <token>",
+            "title": "string",
+            "description": "string",
+            "due_date": "date",
+            "tags": "array of strings"
+          },
+          "response": {
+            "id": "UUID"
+          }
+        },
+        "PUT /tasks/{id}": {
+          "request": {
+            "Authorization": "Bearer <token>",
+            "title": "string",
+            "description": "string",
+            "due_date": "date",
+            "completed": "boolean",
+            "tags": "array of strings"
+          },
+          "response": {
+            "id": "UUID"
+          }
+        },
+        "DELETE /tasks/{id}": {
+          "request": {
+            "Authorization": "Bearer <token>"
+          },
+          "response": {
+            "message": "Task deleted"
+          }
+        }
+      }
+    },
+    "key_tradeoffs": [
+      "Simplicity vs. Scalability:  The monolithic architecture is simpler to develop and deploy initially, but scaling might require refactoring later.  This is acceptable given the project's priority.",
+      "Feature completeness vs. Time to market:  Focus on core features first.  Advanced features like complex filtering or collaboration can be added iteratively.",
+      "Security vs. Development speed:  Use established libraries and best practices for authentication and authorization.  Avoid overly complex security measures that slow down development."
+    ]
+  },
+  "plan": [
+    {
+      "epic": "User Authentication",
+      "priority": "high",
+      "stories": [
+        {
+          "id": 1,
+          "title": "Create Account",
+          "tasks": [
+            {
+              "title": "Design signup page",
+              "estimate": 1,
+              "dependencies": []
+            },
+            {
+              "title": "Implement signup API endpoint (FastAPI)",
+              "estimate": 4,
+              "dependencies": [
+                "Design signup page"
+              ]
+            },
+            {
+              "title": "Implement user creation in database (PostgreSQL)",
+              "estimate": 2,
+              "dependencies": [
+                "Implement signup API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Implement email validation",
+              "estimate": 2,
+              "dependencies": [
+                "Implement signup API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Implement password validation",
+              "estimate": 2,
+              "dependencies": [
+                "Implement signup API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Implement duplicate email handling",
+              "estimate": 1,
+              "dependencies": [
+                "Implement signup API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Implement signup page UI (React)",
+              "estimate": 4,
+              "dependencies": [
+                "Implement signup API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Test signup functionality",
+              "estimate": 2,
+              "dependencies": [
+                "Implement signup page UI (React)"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Log In",
+          "tasks": [
+            {
+              "title": "Design login page",
+              "estimate": 1,
+              "dependencies": []
+            },
+            {
+              "title": "Implement login API endpoint (FastAPI)",
+              "estimate": 3,
+              "dependencies": [
+                "Design login page"
+              ]
+            },
+            {
+              "title": "Implement authentication (JWT)",
+              "estimate": 2,
+              "dependencies": [
+                "Implement login API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Implement login page UI (React)",
+              "estimate": 3,
+              "dependencies": [
+                "Implement login API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Test login functionality",
+              "estimate": 2,
+              "dependencies": [
+                "Implement login page UI (React)"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "epic": "Task Management",
+      "priority": "high",
+      "stories": [
+        {
+          "id": 3,
+          "title": "Create Task",
+          "tasks": [
+            {
+              "title": "Design task creation form",
+              "estimate": 1,
+              "dependencies": []
+            },
+            {
+              "title": "Implement task creation API endpoint (FastAPI)",
+              "estimate": 3,
+              "dependencies": [
+                "Design task creation form"
+              ]
+            },
+            {
+              "title": "Implement task creation in database (PostgreSQL)",
+              "estimate": 2,
+              "dependencies": [
+                "Implement task creation API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Implement task creation UI (React)",
+              "estimate": 3,
+              "dependencies": [
+                "Implement task creation API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Test task creation functionality",
+              "estimate": 2,
+              "dependencies": [
+                "Implement task creation UI (React)"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "title": "Read Tasks",
+          "tasks": [
+            {
+              "title": "Design task list UI",
+              "estimate": 2,
+              "dependencies": []
+            },
+            {
+              "title": "Implement task retrieval API endpoint (FastAPI)",
+              "estimate": 3,
+              "dependencies": [
+                "Design task list UI"
+              ]
+            },
+            {
+              "title": "Implement task list UI (React)",
+              "estimate": 4,
+              "dependencies": [
+                "Implement task retrieval API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Test task retrieval functionality",
+              "estimate": 2,
+              "dependencies": [
+                "Implement task list UI (React)"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "title": "Update Task",
+          "tasks": [
+            {
+              "title": "Implement task update API endpoint (FastAPI)",
+              "estimate": 3,
+              "dependencies": []
+            },
+            {
+              "title": "Implement task update UI (React)",
+              "estimate": 3,
+              "dependencies": [
+                "Implement task update API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Test task update functionality",
+              "estimate": 2,
+              "dependencies": [
+                "Implement task update UI (React)"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "title": "Delete Task",
+          "tasks": [
+            {
+              "title": "Implement task delete API endpoint (FastAPI)",
+              "estimate": 2,
+              "dependencies": []
+            },
+            {
+              "title": "Implement task delete UI (React)",
+              "estimate": 2,
+              "dependencies": [
+                "Implement task delete API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Test task delete functionality",
+              "estimate": 1,
+              "dependencies": [
+                "Implement task delete UI (React)"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "epic": "Reminders",
+      "priority": "medium",
+      "stories": [
+        {
+          "id": 7,
+          "title": "Task Reminders",
+          "tasks": [
+            {
+              "title": "Research reminder implementation (Celery/cron)",
+              "estimate": 2,
+              "dependencies": []
+            },
+            {
+              "title": "Implement reminder functionality (MVP - cron)",
+              "estimate": 4,
+              "dependencies": [
+                "Research reminder implementation (Celery/cron)"
+              ]
+            },
+            {
+              "title": "Test reminder functionality",
+              "estimate": 2,
+              "dependencies": [
+                "Implement reminder functionality (MVP - cron)"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "epic": "Filtering and Tagging",
+      "priority": "medium",
+      "stories": [
+        {
+          "id": 8,
+          "title": "Filter Tasks by Tag",
+          "tasks": [
+            {
+              "title": "Implement tag filtering API endpoint (FastAPI)",
+              "estimate": 3,
+              "dependencies": []
+            },
+            {
+              "title": "Implement tag filtering UI (React)",
+              "estimate": 3,
+              "dependencies": [
+                "Implement tag filtering API endpoint (FastAPI)"
+              ]
+            },
+            {
+              "title": "Test tag filtering functionality",
+              "estimate": 2,
+              "dependencies": [
+                "Implement tag filtering UI (React)"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "code_changes": {
+    "api/app/routers/users.py": "from fastapi import APIRouter, Depends, HTTPException, status\nfrom fastapi.security import OAuth2PasswordRequestForm\nfrom sqlalchemy.orm import Session\n\nfrom app.database import get_db\nfrom app.schemas import User, Token\nfrom app.auth import authenticate_user, create_access_token\n\nrouter = APIRouter()\n\n@router.post(\"/token\", response_model=Token)\ndef login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):\n    user = authenticate_user(form_data.username, form_data.password, db)\n    if not user:\n        raise HTTPException(\n            status_code=status.HTTP_401_UNAUTHORIZED,\n            detail=\"Incorrect username or password\",\n            headers={\n                \"WWW-Authenticate\": \"Bearer\",\n            },\n        )\n    access_token = create_access_token(data={'sub': user.username})\n    return {\"access_token\": access_token, \"token_type\": \"bearer\"}\n\n@router.post(\"/users\", response_model=User)\ndef create_user(user: User, db: Session = Depends(get_db)):\n    # TODO: Implement user creation logic\n    pass\n",
+    "api/app/schemas.py": "from pydantic import BaseModel, EmailStr\n\nclass User(BaseModel):\n    username: str\n    email: EmailStr\n    password: str\n\n    class Config:\n        orm_mode = True\n\nclass Token(BaseModel):\n    access_token: str\n    token_type: str\n",
+    "api/app/auth.py": "from fastapi import HTTPException, status\nfrom sqlalchemy.orm import Session\n\nfrom app.database import get_user\nfrom app.models import User as UserModel\nfrom app.schemas import User\nfrom app.utils import get_password_hash, verify_password\nfrom app.config import settings\nimport jwt\n\ndef authenticate_user(username: str, password: str, db: Session):\n    user = get_user(db, username)\n    if not user:\n        return None\n    if not verify_password(password, user.password):\n        return None\n    return user\n\ndef create_access_token(data: dict):\n    to_encode = data.copy()\n    expire = datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)\n    to_encode.update({\"exp\": datetime.datetime.utcnow() + expire})\n    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)\n    return encoded_jwt\n",
+    "api/app/main.py": "from fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\nfrom .database import engine, Base\nfrom .routers import users\n\nBase.metadata.create_all(bind=engine)\n\napp = FastAPI()\n\napp.include_router(users.router)\n\norigins = [\n    \"*\",\n]\n\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=origins,\n    allow_credentials=True,\n    allow_methods=['*'],\n    allow_headers=['*'],\n)\n",
+    "api/app/database.py": "from sqlalchemy import create_engine\nfrom sqlalchemy.ext.declarative import declarative_base\nfrom sqlalchemy.orm import sessionmaker\n\nfrom app.config import settings\n\nDATABASE_URL = settings.DATABASE_URL\n\nengin = create_engine(DATABASE_URL)\n\nSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin)\n\nBase = declarative_base()\n\ndef get_db():\n    db = SessionLocal()\n    try:\n        yield db\n    finally:\n        db.close()\n",
+    "api/app/models.py": "from sqlalchemy import Column, Integer, String\nfrom sqlalchemy.orm import relationship\n\nfrom app.database import Base\nfrom app.utils import get_password_hash\n\nclass User(Base):\n    __tablename__ = \"users\"\n    id = Column(Integer, primary_key=True, index=True)\n    username = Column(String, unique=True, index=True)\n    email = Column(String, unique=True, index=True)\n    password = Column(String)\n\n    def __init__(self, username, email, password):\n        self.username = username\n        self.email = email\n        self.password = get_password_hash(password)\n",
+    "api/app/utils.py": "from passlib.context import CryptContext\n\npwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')\n\ndef get_password_hash(password):\n    return pwd_context.hash(password)\n\ndef verify_password(plain_password, hashed_password):\n    return pwd_context.verify(plain_password, hashed_password)\n",
+    "api/app/config.py": "import os\nfrom dotenv import load_dotenv\nfrom pathlib import Path\n\nload_dotenv()\n\nclass Settings:\n    SECRET_KEY: str = os.getenv(\"SECRET_KEY\")\n    ALGORITHM: str = \"HS256\"\n    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30\n    DATABASE_URL: str = os.getenv(\"DATABASE_URL\")\n\nsettings = Settings()\n"
+  },
+  "tests": {
+    "test_database.py": "import pytest\nfrom fastapi.encoders import jsonable_encoder\nfrom sqlalchemy.orm import Session\n\nfrom app.database import get_db, engine, Base\nfrom app.models import User\n\n# Initialize database\nBase.metadata.create_all(bind=engine)\n\ndef test_get_db(test_db):\n    db: Session = get_db()\n    assert db is not None\n    db.close()\n\n\n@pytest.fixture(scope=\"function\")\ndef test_db():\n    Base.metadata.create_all(bind=engine)\n    try:\n        db = next(get_db())\n        yield db\n    finally:\n        db.close()\n        Base.metadata.drop_all(bind=engine)\n\n\ndef test_create_user(test_db):\n    test_user = User(email=\"test@example.com\", password=\"password123\")\n    test_db.add(test_user)\n    test_db.commit()\n    retrieved_user = test_db.query(User).filter(User.email == \"test@example.com\").first()\n    assert retrieved_user is not None\n    assert retrieved_user.email == \"test@example.com\"\n    test_db.delete(retrieved_user)\n    test_db.commit()",
+    "test_models.py": "import pytest\nfrom app.models import User\n\ndef test_user_model():\n    user = User(email=\"test@example.com\", password=\"password123\")\n    assert user.email == \"test@example.com\"\n    assert user.password != \"password123\" # Password should be hashed",
+    "test_schemas.py": "from app.schemas import UserCreate, User\n\ndef test_user_create_schema():\n    user_data = {\"email\": \"test@example.com\", \"password\": \"password123\"}\n    user_create = UserCreate(**user_data)\n    assert user_create.email == \"test@example.com\"\n    assert user_create.password == \"password123\"\n\ndef test_user_schema():\n    user_data = {\"email\": \"test@example.com\", \"id\": 1}\n    user = User(**user_data)\n    assert user.email == \"test@example.com\"\n    assert user.id == 1",
+    "test_auth.py": "import pytest\nfrom app.auth import authenticate_user, create_access_token\nfrom app.models import User\nfrom fastapi import HTTPException\nfrom passlib.context import CryptContext\n\npwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')\n\ndef test_authenticate_user_success():\n    test_user = User(email=\"test@example.com\", password=pwd_context.hash('password123'))\n    authenticated_user = authenticate_user(test_user.email, 'password123', pwd_context)\n    assert authenticated_user == test_user\n\ndef test_authenticate_user_failure():\n    test_user = User(email=\"test@example.com\", password=pwd_context.hash('password123'))\n    with pytest.raises(HTTPException):\n        authenticate_user(test_user.email, 'wrongpassword', pwd_context)\n\ndef test_create_access_token():\n    token = create_access_token({'sub': 'testuser'})\n    assert isinstance(token, str)",
+    "test_utils.py": "from app.utils import verify_password\nfrom passlib.context import CryptContext\n\npwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')\n\ndef test_verify_password():\n    hashed_password = pwd_context.hash('password123')\n    assert verify_password('password123', hashed_password, pwd_context)\n    assert not verify_password('wrongpassword', hashed_password, pwd_context)",
+    "test_users_router.py": "import pytest\nfrom fastapi.testclient import TestClient\nfrom app.main import app\n\nclient = TestClient(app)\n\n#These tests require a running database and user creation.  Consider mocking for better isolation.\n# def test_create_user():\n#     response = client.post(\"/users/\", json={\"email\": \"test2@example.com\", \"password\": \"password123\"})\n#     assert response.status_code == 200\n#     assert response.json()['email'] == \"test2@example.com\"\n\n# def test_get_user():\n#     response = client.get(\"/users/me/\")\n#     assert response.status_code == 200"
+  },
+  "test_report": {
+    "summary": "stubbed",
+    "passed": true,
+    "coverage": 0.0,
+    "notes": "Replace with real runner"
+  },
+  "ci_cd": {
+    "filename": "ci_cd.yaml",
+    "content": "version: 2.0\njobs:\n  build:\n    docker:\n      - image: docker:latest\n    steps:\n      - checkout\n      - run:\n          name: Build the Docker image\n          command: docker build -t my-app:latest .\n      - run:\n          name: Push the Docker image\n          command: docker push my-app:latest"
+  },
+  "deployment": {
+    "strategy": "docker-compose",
+    "envs": {
+      "DATABASE_URL": "postgres://user:password@host:port/database",
+      "API_KEY": "your-api-key"
+    }
+  },
+  "approvals": {
+    "requirements_review": {
+      "approved": true,
+      "notes": "",
+      "by": "cli-user"
+    },
+    "architecture_review": {
+      "approved": true,
+      "notes": "",
+      "by": "cli-user"
+    },
+    "preprod_release": {
+      "approved": true,
+      "notes": "",
+      "by": "cli-user"
+    },
+    "prod_release": {
+      "approved": true,
+      "notes": "",
+      "by": "cli-user"
+    }
+  },
+  "repo_url": null,
+  "run_id": "1756209688"
+}
