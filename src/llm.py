@@ -1,7 +1,10 @@
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
+from dotenv import load_dotenv
 
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+load_dotenv()
+
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 if not GOOGLE_API_KEY:
     raise RuntimeError("GOOGLE_API_KEY env var is required.")
 
