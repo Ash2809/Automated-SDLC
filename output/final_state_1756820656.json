@@ -1,0 +1,563 @@
+{
+  "spec": {
+    "project_name": "Task Manager",
+    "description": "A simple web app to track personal tasks and reminders",
+    "features": [
+      "User authentication",
+      "Task CRUD",
+      "Reminders",
+      "Tags and filters"
+    ],
+    "constraints": {
+      "tech_stack": "React + FastAPI + Postgres",
+      "deployment": "docker",
+      "priority": "high"
+    }
+  },
+  "user_stories": [
+    {
+      "id": 1,
+      "title": "As a user, I want to be able to create an account so that I can start managing my tasks.",
+      "description": "This story covers the creation of new user accounts.",
+      "acceptance_criteria": [
+        "A new user can register with a valid email and password.",
+        "Password must meet complexity requirements (minimum length, special characters).",
+        "The system should prevent duplicate email addresses.",
+        "A confirmation email is sent upon successful registration (optional, but recommended).",
+        "A user receives an error message for invalid inputs."
+      ],
+      "priority": "high",
+      "epic": "User Authentication"
+    },
+    {
+      "id": 2,
+      "title": "As a user, I want to be able to log in to my account so that I can access my tasks.",
+      "description": "This story covers the login functionality for existing users.",
+      "acceptance_criteria": [
+        "A registered user can log in using their email and password.",
+        "The system should handle incorrect credentials gracefully.",
+        "Successful login redirects the user to the task list.",
+        "The system should support password reset functionality (future story)."
+      ],
+      "priority": "high",
+      "epic": "User Authentication"
+    },
+    {
+      "id": 3,
+      "title": "As a user, I want to be able to create a new task so that I can track my to-dos.",
+      "description": "This story covers the creation of new tasks.",
+      "acceptance_criteria": [
+        "A user can add a new task with a title and description.",
+        "The task is saved to the database.",
+        "The new task is displayed in the task list.",
+        "The system handles empty or invalid inputs gracefully."
+      ],
+      "priority": "high",
+      "epic": "Task Management"
+    },
+    {
+      "id": 4,
+      "title": "As a user, I want to be able to view my existing tasks so that I can see what needs to be done.",
+      "description": "This story covers viewing the list of existing tasks.",
+      "acceptance_criteria": [
+        "All existing tasks for the logged-in user are displayed.",
+        "Tasks are displayed with title, description, and status (e.g., complete/incomplete).",
+        "Tasks are displayed in a user-friendly format (e.g., a table or list)."
+      ],
+      "priority": "high",
+      "epic": "Task Management"
+    },
+    {
+      "id": 5,
+      "title": "As a user, I want to be able to update my existing tasks so that I can reflect changes in my to-dos.",
+      "description": "This story covers updating existing tasks.",
+      "acceptance_criteria": [
+        "A user can edit the title and description of an existing task.",
+        "Changes are saved to the database.",
+        "The updated task is reflected in the task list.",
+        "The system handles invalid inputs gracefully."
+      ],
+      "priority": "high",
+      "epic": "Task Management"
+    },
+    {
+      "id": 6,
+      "title": "As a user, I want to be able to delete my tasks so that I can remove completed or irrelevant items.",
+      "description": "This story covers deleting existing tasks.",
+      "acceptance_criteria": [
+        "A user can delete a task.",
+        "The task is removed from the database.",
+        "The task is removed from the task list.",
+        "The system provides confirmation before deleting a task."
+      ],
+      "priority": "high",
+      "epic": "Task Management"
+    },
+    {
+      "id": 7,
+      "title": "As a user, I want to set reminders for my tasks so that I don't miss deadlines.",
+      "description": "This story covers setting reminders for tasks.",
+      "acceptance_criteria": [
+        "A user can set a reminder for a task with a specific date and time.",
+        "The system sends a notification (e.g., browser notification or email) at the reminder time.",
+        "Reminders are associated with specific tasks.",
+        "The system handles invalid date/time inputs gracefully."
+      ],
+      "priority": "medium",
+      "epic": "Reminders"
+    },
+    {
+      "id": 8,
+      "title": "As a user, I want to add tags to my tasks so that I can categorize and filter them.",
+      "description": "This story covers adding tags to tasks.",
+      "acceptance_criteria": [
+        "A user can add one or more tags to a task.",
+        "Tags are saved with the task in the database.",
+        "The system supports searching and filtering tasks by tags."
+      ],
+      "priority": "medium",
+      "epic": "Tags and Filters"
+    },
+    {
+      "id": 9,
+      "title": "As a user, I want to filter my tasks by tags so that I can easily find specific tasks.",
+      "description": "This story covers filtering tasks by tags.",
+      "acceptance_criteria": [
+        "A user can filter the task list by one or more tags.",
+        "Only tasks matching the selected tags are displayed.",
+        "The filter functionality is intuitive and easy to use."
+      ],
+      "priority": "medium",
+      "epic": "Tags and Filters"
+    }
+  ],
+  "architecture": {},
+  "plan": [
+    {
+      "epic": "User Authentication",
+      "stories": [
+        {
+          "id": 1,
+          "title": "Create Account",
+          "tasks": [
+            {
+              "name": "Design user registration form",
+              "estimate": 1,
+              "dependencies": []
+            },
+            {
+              "name": "Implement user registration backend",
+              "estimate": 4,
+              "dependencies": [
+                "Design user registration form"
+              ]
+            },
+            {
+              "name": "Implement email confirmation (optional)",
+              "estimate": 2,
+              "dependencies": [
+                "Implement user registration backend"
+              ]
+            },
+            {
+              "name": "Implement duplicate email check",
+              "estimate": 1,
+              "dependencies": [
+                "Implement user registration backend"
+              ]
+            },
+            {
+              "name": "Implement password complexity check",
+              "estimate": 1,
+              "dependencies": [
+                "Design user registration form"
+              ]
+            },
+            {
+              "name": "Write unit and integration tests",
+              "estimate": 2,
+              "dependencies": [
+                "Implement user registration backend",
+                "Implement email confirmation (optional)",
+                "Implement duplicate email check",
+                "Implement password complexity check"
+              ]
+            },
+            {
+              "name": "User acceptance testing",
+              "estimate": 1,
+              "dependencies": [
+                "Write unit and integration tests"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Login",
+          "tasks": [
+            {
+              "name": "Design user login form",
+              "estimate": 1,
+              "dependencies": []
+            },
+            {
+              "name": "Implement user login backend",
+              "estimate": 3,
+              "dependencies": [
+                "Design user login form"
+              ]
+            },
+            {
+              "name": "Implement session management",
+              "estimate": 2,
+              "dependencies": [
+                "Implement user login backend"
+              ]
+            },
+            {
+              "name": "Handle incorrect credentials",
+              "estimate": 1,
+              "dependencies": [
+                "Implement user login backend"
+              ]
+            },
+            {
+              "name": "Write unit and integration tests",
+              "estimate": 2,
+              "dependencies": [
+                "Implement user login backend",
+                "Implement session management",
+                "Handle incorrect credentials"
+              ]
+            },
+            {
+              "name": "User acceptance testing",
+              "estimate": 1,
+              "dependencies": [
+                "Write unit and integration tests"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "epic": "Task Management",
+      "stories": [
+        {
+          "id": 3,
+          "title": "Create Task",
+          "tasks": [
+            {
+              "name": "Design task creation form",
+              "estimate": 1,
+              "dependencies": []
+            },
+            {
+              "name": "Implement task creation backend",
+              "estimate": 3,
+              "dependencies": [
+                "Design task creation form"
+              ]
+            },
+            {
+              "name": "Implement task display in task list",
+              "estimate": 2,
+              "dependencies": [
+                "Implement task creation backend"
+              ]
+            },
+            {
+              "name": "Handle invalid inputs",
+              "estimate": 1,
+              "dependencies": [
+                "Implement task creation backend"
+              ]
+            },
+            {
+              "name": "Write unit and integration tests",
+              "estimate": 2,
+              "dependencies": [
+                "Implement task creation backend",
+                "Implement task display in task list",
+                "Handle invalid inputs"
+              ]
+            },
+            {
+              "name": "User acceptance testing",
+              "estimate": 1,
+              "dependencies": [
+                "Write unit and integration tests"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "title": "View Tasks",
+          "tasks": [
+            {
+              "name": "Design task list view",
+              "estimate": 1,
+              "dependencies": []
+            },
+            {
+              "name": "Implement task list retrieval",
+              "estimate": 2,
+              "dependencies": [
+                "Design task list view"
+              ]
+            },
+            {
+              "name": "Write unit and integration tests",
+              "estimate": 1,
+              "dependencies": [
+                "Implement task list retrieval"
+              ]
+            },
+            {
+              "name": "User acceptance testing",
+              "estimate": 1,
+              "dependencies": [
+                "Write unit and integration tests"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "title": "Update Task",
+          "tasks": [
+            {
+              "name": "Implement task update backend",
+              "estimate": 3,
+              "dependencies": []
+            },
+            {
+              "name": "Implement UI for task update",
+              "estimate": 2,
+              "dependencies": [
+                "Implement task update backend"
+              ]
+            },
+            {
+              "name": "Handle invalid inputs",
+              "estimate": 1,
+              "dependencies": [
+                "Implement task update backend"
+              ]
+            },
+            {
+              "name": "Write unit and integration tests",
+              "estimate": 2,
+              "dependencies": [
+                "Implement task update backend",
+                "Implement UI for task update",
+                "Handle invalid inputs"
+              ]
+            },
+            {
+              "name": "User acceptance testing",
+              "estimate": 1,
+              "dependencies": [
+                "Write unit and integration tests"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "title": "Delete Task",
+          "tasks": [
+            {
+              "name": "Implement task deletion backend",
+              "estimate": 2,
+              "dependencies": []
+            },
+            {
+              "name": "Implement UI for task deletion",
+              "estimate": 1,
+              "dependencies": [
+                "Implement task deletion backend"
+              ]
+            },
+            {
+              "name": "Implement confirmation dialog",
+              "estimate": 1,
+              "dependencies": [
+                "Implement UI for task deletion"
+              ]
+            },
+            {
+              "name": "Write unit and integration tests",
+              "estimate": 1,
+              "dependencies": [
+                "Implement task deletion backend",
+                "Implement UI for task deletion",
+                "Implement confirmation dialog"
+              ]
+            },
+            {
+              "name": "User acceptance testing",
+              "estimate": 1,
+              "dependencies": [
+                "Write unit and integration tests"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "epic": "Reminders",
+      "stories": [
+        {
+          "id": 7,
+          "title": "Set Reminders",
+          "tasks": [
+            {
+              "name": "Design reminder functionality",
+              "estimate": 2,
+              "dependencies": []
+            },
+            {
+              "name": "Implement reminder backend",
+              "estimate": 4,
+              "dependencies": [
+                "Design reminder functionality"
+              ]
+            },
+            {
+              "name": "Implement notification system (browser/email)",
+              "estimate": 4,
+              "dependencies": [
+                "Implement reminder backend"
+              ]
+            },
+            {
+              "name": "Write unit and integration tests",
+              "estimate": 3,
+              "dependencies": [
+                "Implement reminder backend",
+                "Implement notification system (browser/email)"
+              ]
+            },
+            {
+              "name": "User acceptance testing",
+              "estimate": 2,
+              "dependencies": [
+                "Write unit and integration tests"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "epic": "Tags and Filters",
+      "stories": [
+        {
+          "id": 8,
+          "title": "Add Tags",
+          "tasks": [
+            {
+              "name": "Design tag input",
+              "estimate": 1,
+              "dependencies": []
+            },
+            {
+              "name": "Implement tag saving",
+              "estimate": 2,
+              "dependencies": [
+                "Design tag input"
+              ]
+            },
+            {
+              "name": "Write unit and integration tests",
+              "estimate": 1,
+              "dependencies": [
+                "Implement tag saving"
+              ]
+            },
+            {
+              "name": "User acceptance testing",
+              "estimate": 1,
+              "dependencies": [
+                "Write unit and integration tests"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 9,
+          "title": "Filter by Tags",
+          "tasks": [
+            {
+              "name": "Design filter UI",
+              "estimate": 1,
+              "dependencies": []
+            },
+            {
+              "name": "Implement filter backend",
+              "estimate": 3,
+              "dependencies": [
+                "Design filter UI"
+              ]
+            },
+            {
+              "name": "Write unit and integration tests",
+              "estimate": 2,
+              "dependencies": [
+                "Implement filter backend"
+              ]
+            },
+            {
+              "name": "User acceptance testing",
+              "estimate": 1,
+              "dependencies": [
+                "Write unit and integration tests"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "code_changes": {},
+  "tests": {
+    "test_example.py": "import unittest\n\nclass TestExample(unittest.TestCase):\n    def test_addition(self):\n        self.assertEqual(2 + 2, 4)\n\n    def test_subtraction(self):\n        self.assertEqual(5 - 3, 2)\n\n    def test_multiplication(self):\n        self.assertEqual(4 * 2, 8)\n\n    def test_division(self):\n        self.assertEqual(10 / 2, 5)\n\n    def test_string_concatenation(self):\n        self.assertEqual('hello' + ' ' + 'world', 'hello world')\n\n    def test_list_concatenation(self):\n        self.assertEqual([1,2] + [3,4], [1,2,3,4])\n\n    def test_list_length(self):\n        self.assertEqual(len([1,2,3]), 3)\n\n    def test_dictionary_access(self):\n        my_dict = {'a': 1, 'b': 2}\n        self.assertEqual(my_dict['a'], 1)\n        self.assertEqual(my_dict.get('c', None), None) #test for key not found\n\n    def test_boolean_operations(self):\n        self.assertTrue(True)\n        self.assertFalse(False)\n        self.assertTrue(True and True)\n        self.assertFalse(True and False)\n        self.assertTrue(True or False)\n        self.assertFalse(False or False)\n\n    def test_exception_handling(self):\n        with self.assertRaises(ZeroDivisionError):\n            1/0\n\n    def test_none_check(self):\n        self.assertIsNone(None)\n        self.assertIsNotNone(1)\n\n\nif __name__ == '__main__':\n    unittest.main()"
+  },
+  "test_report": {
+    "summary": "stubbed",
+    "passed": true,
+    "coverage": 0.0,
+    "notes": "Replace with real runner"
+  },
+  "ci_cd": {},
+  "deployment": {},
+  "approvals": {
+    "requirements_review": {
+      "approved": true,
+      "notes": "",
+      "by": "cli-user"
+    },
+    "architecture_review": {
+      "approved": true,
+      "notes": "",
+      "by": "cli-user"
+    },
+    "preprod_release": {
+      "approved": true,
+      "notes": "",
+      "by": "cli-user"
+    },
+    "prod_release": {
+      "approved": true,
+      "notes": "",
+      "by": "cli-user"
+    }
+  },
+  "repo_url": null,
+  "run_id": "1756820656"
+}
