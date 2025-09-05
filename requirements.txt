@@ -1,0 +1,16 @@
+# --- Web/API ---
+fastapi
+uvicorn
+
+# --- Core LangChain / Graph ---
+langgraph
+langchain
+langchain-google-genai
+
+# --- Utilities ---
+pydantic
+python-dotenv 
+
+# Dev / Testing
+pytest
+httpx
